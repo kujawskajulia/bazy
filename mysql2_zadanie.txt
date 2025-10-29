@@ -1,0 +1,88 @@
+CREATE TABLE pracownik (
+    -> id_pracownika INT AUTO_INCREMENT PRIMARY KEY,
+    -> imie VARCHAR(40) NOT NULL,
+    -> nazwisko VARCHAR(60) NOT NULL,
+    -> data_urodzenia DATE NOT NULL);
+INSERT INTO pracownik (imie, nazwisko, data_urodzenia) values
+
+    -> ('Julia', 'Kujawska', '2007-06-05'),
+    -> ('Julia', 'Jakubowska','2006-09-02'),
+    -> ('Anroni', 'Potrzuski', '2005-09-08');
+
+UPDATE pracownik SET data_urodzenia = '2007-09-09' WHERE id_pracownika = 1;
+
+ CREATE TABLE zadanie_2 (
+    -> id_zadania INT AUTO_INCREMENT PRIMARY KEY,
+    -> nazwa_zadania VARCHAR(150) NOT NULL,
+    -> priorytet ENUM('niski', 'normalnu', 'wysoki') DEFAULT 'normalnu',
+    -> opis TEXT,
+    -> pracownik INT,
+    -> FOREIGN KEY (pracownik) REFERENCES pracownik(id_pracownika) ON DELETE SET;
+
+INSERT INTO zadanie_2 (nazwa_zadania, priorytet, opis, pracownik) values
+    -> ('Obsluga sprzetow', 'wysoki', 'konserwacja i naprawa elektroniki', 1),
+    -> ('Obsluga klientow', 'normalnu', 'opieka nad potrzebami klientow', 2),
+    -> ('Obsluga kawaiarni', 'niski', 'robienie kawy i grzanie ciast', 3);
+
+CREATE TABLE projekt(
+    ->  id_projektu INT AUTO_INCREMENT PRIMARY KEY,
+    -> nazwa_projektu VARCHAR(150),
+    -> data_rozpoczecia DATE,
+    -> data_zakonczenia DATE);
+
+ALTER TABLE projekt
+    -> ADD menadzer_projektu INT,
+    -> ADD FOREIGN KEY (menadzer_projektu) REFERENCES pracownik (id_pracownika);
+
+ INSERT INTO projekt (nazwa_projektu, data_rozpoczecia, data_zakonczenia) values
+    -> ('nowy ekspres-zbiorka', '2024-07-07', '2024-10-10'),
+    -> ('aplikacja na telefon', '2025-01-01', '2025-03-05');
+
+ALTER TABLE zadanie_2
+    -> ADD projekt INT,
+    -> ADD FOREIGN KEY (projekt) REFERENCES projekt (id_projektu) ON DELETE CASCADE;
+
+UPDATE zadanie_2 SET projekt = 1 WHERE id_zadania IN (1,2);
+UPDATE zadanie_2 SET projekt = 2  WHERE id_zadania = 3;
+
+CREATE TABLE sprint(
+    -> id_sprintu INT AUTO_INCREMENT PRIMARY KEY,
+    -> numer_sprintu INT UNSIGNED,
+    -> data_rozpoczecia DATE,
+    -> data_zakonczenia DATE);
+
+ALTER TABLE sprint
+    -> ADD COLUMN sprint INT NULL,
+    -> ADD CONSTRAINT zadanie_sprint
+    -> FOREIGN KEY(sprint) REFERENCES sprint(id_sprintu)
+    -> ON DELETE SET NULL;
+
+ INSERT INTO sprint (numer_sprintu, data_rozpoczecia, data_zakonczenia) values
+    -> ('1', '2025-10-01', '2025-10-05');
+
+UPDATE sprint SET sprint = 1 WHERE id_sprintu IN (1,2);
+
+ CREATE TABLE status(
+    -> id_statusu INT AUTO_INCREMENT PRIMARY KEY,
+    -> nazwa_statusu VARCHAR(20));
+
+ INSERT INTO status (nazwa_statusu) values
+    -> ('Nowe'),
+    -> ('W trakcie'),
+    -> ('Zakonczone');
+
+ CREATE TABLE zadanie_has_status(
+    -> id_zdarzenia INT AUTO_INCREMENT PRIMARY KEY,
+    -> id_zadania INT,
+    -> id_statusu INT,
+    -> data_zdarzenia DATETIME DEFAULT CURRENT_TIMESTAMP,
+    -> FOREIGN KEY (id_zadania) REFERENCES zadanie_2 (id_zadania) ON DELETE CASCADE,
+    -> FOREIGN KEY (id_statusu) REFERENCES status (id_statusu) ON DELETE CASCADE);
+
+INSERT INTO zadanie_has_status (id_zadania, id_statusu) values (1, 1), (1, 2), (2,3);
+
+DELETE FROM projekt WHERE id_projektu = 1;
+
+SELECT * FROM zadanie_2;
+
+DROP TABLE sprint;
