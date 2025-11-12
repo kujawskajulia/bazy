@@ -1,0 +1,46 @@
+zadanie 1
+ALTER TABLE zadanie_2 DROP CONSTRAINT zadanie_2_ibfk_1;
+ALTER TABLE projekt DROP CONSTRAINT projekt_ibfk_1;
+
+ALTER TABLE pracownik DROP COLUMN id_pracownika;
+
+ALTER TABLE pracownik ADD COLUMN id_pracownika INT;
+ALTER TABLE pracownik id_pracownika INT PRIMARY KEY AUTO_INCREMENT NOT NULL;
+
+ALTER TABLE zadanie_2 ADD FOREIGN KEY (pracownik) REFERENCES pracownik (id_pracownika) ON DELETE SET NULL;
+
+ALTER TABLE projekt ADD FOREIGN KEY (menadzer_projektu) REFERENCES pracownik (id_pracownika) ON DELETE CASCADE;
+
+zadanie 2
+ALTER TABLE zadanie_2 ADD COLUMN godziny_szacowane INT DEFAULT 8;
+
+UPDATE zadanie_2 SET godziny_szacowane = 4 WHERE id_zadania = 1; 
+UPDATE zadanie_2 SET godziny_szacowane = 12 WHERE id_zadania = 2;
+UPDATE zadanie_2 SET godziny_szacowane = 16 WHERE id_zadania = 3;
+
+ALTER TABLE zadanie_2 MODIFY godziny_szacowane INT DEFAULT 6;
+
+INSERT INTO zadanie_2 (nazwa_zadania, priorytet, opis, pracownik) values ('mycie_naczyn', 'wysoki', 'mycie_i_zmywanie', '2'); //godziny_szacowane to 6
+DELETE FROM zadanie_2 WHERE godziny_szacowane = 6;
+
+zadanie 3
+ALTER TABLE projekt ADD COLUMN opis_kratki VARCHAR(50);
+
+ALTER TABLE projekt MODIFY opis_kratki VARCHAR(200);
+
+UPDATE projekt SET opis_kratki = 'MVP' WHERE id_projektu = 1;
+UPDATE projekt SET opis_kratki = 'pilne_wdrozenie' WHERE id_projektu = 2;
+UPDATE projekt SET opis_kratki = 'malo_pilne_wdrozenie' WHERE id_projektu = 3;
+
+ALTER TABLE projekt DROP COLUMN opis_kratki;
+
+zadanie 4
+ALTER TABLE zadanie_2 DROP CONSTRAINT zadanie_2_ibfk_2;
+ALTER TABLE zadanie_2 DROP projekt;
+
+ALTER TABLE zadanie_2 ADD COLUMN projekt INT;
+ALTER TABLE zadanie_2 ADD FOREIGN KEY (projekt) REFERENCES projekt (id_projektu) ON DELETE SET NULL;
+
+DELETE FROM projekt WHERE id_projektu = 1;
+
+SELECT * FROM projekt;
